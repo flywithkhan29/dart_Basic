@@ -1,59 +1,51 @@
-void main() {
-  // Seller Profile Variables
-  String sellerName = "TechZone Pvt Ltd";
-  bool gstVerified = true;
-  int productCount = 85;
-  double rating = 4.6;
-  int yearsInBusiness = 4;
+String getApprovalStatus(bool gst, int products, double rating, int years) {
+  if (!gst) {
+    return "REJECTED | Reason: GST verification is mandatory to sell on this platform.";
+  } else if (rating < 3.0) {
+    return "REJECTED | Reason: Seller rating is below the minimum threshold of 3.0.";
+  } else if (products < 5) {
+    return "REJECTED | Reason: Minimum 5 products required to be listed.";
+  } else if (rating >= 4.5 && products >= 50 && years >= 3) {
+    return "PREMIUM APPROVED | Perks: Priority listing, dedicated account manager, lower commission rate.";
+  } else if (rating >= 3.5 && products >= 20 && years >= 1) {
+    return "STANDARD APPROVED | Perks: Standard listing, access to promotional campaigns.";
+  } else if (rating >= 3.0 && products >= 5) {
+    String status = "CONDITIONALLY APPROVED";
+    if (rating < 3.5) {
+      status += "\n  Action : Improve your rating to 3.5+ within 60 days.";
+    }
+    if (products < 20) {
+      status += "\n  Action : Add at least ${20 - products} more product(s) to unlock full features.";
+    }
+    if (years < 1) {
+      status += "\n  Action : Account will be reviewed again after 1 year in business.";
+    }
+    return status;
+  } else {
+    return "REJECTED | Reason: Does not meet the minimum approval criteria.";
+  }
+}
+
+void printSellerCard(String name, bool gst, int products, double rating, int years) {
+  String status = getApprovalStatus(gst, products, rating, years);
 
   print("=============================");
   print("  SELLER APPROVAL SYSTEM");
   print("=============================");
-  print("Seller      : $sellerName");
-  print("GST Verified: $gstVerified");
-  print("Products    : $productCount");
+  print("Seller      : $name");
+  print("GST Verified: $gst");
+  print("Products    : $products");
   print("Rating      : $rating / 5.0");
-  print("Experience  : $yearsInBusiness year(s)");
+  print("Experience  : $years year(s)");
   print("-----------------------------");
+  print("Status      : $status");
+  print("=============================\n");
+}
 
-  // Approval Logic
-  if (!gstVerified) {
-    // Hard reject — GST is mandatory
-    print("Status :  REJECTED");
-    print("Reason : GST verification is mandatory to sell on this platform.");
-  } else if (rating < 3.0) {
-    // Hard reject — too low rating
-    print("Status :  REJECTED");
-    print("Reason : Seller rating is below the minimum threshold of 3.0.");
-  } else if (productCount < 5) {
-    // Hard reject — insufficient inventory
-    print("Status :  REJECTED");
-    print("Reason : Minimum 5 products required to be listed.");
-  } else if (gstVerified && rating >= 4.5 && productCount >= 50 && yearsInBusiness >= 3) {
-    // Top tier seller
-    print("Status : ⭐ PREMIUM APPROVED");
-    print("Perks  : Priority listing, dedicated account manager, lower commission rate.");
-  } else if (gstVerified && rating >= 3.5 && productCount >= 20 && yearsInBusiness >= 1) {
-    // Solid seller
-    print("Status : ✅ STANDARD APPROVED");
-    print("Perks  : Standard listing, access to promotional campaigns.");
-  } else if (gstVerified && rating >= 3.0 && productCount >= 5) {
-    // Meets minimum but needs improvement
-    print("Status : ⚠️  CONDITIONALLY APPROVED");
-
-    if (rating < 3.5) {
-      print("Action : Improve your rating to 3.5+ within 60 days to maintain approval.");
-    }
-    if (productCount < 20) {
-      print("Action : Add at least ${20 - productCount} more product(s) to unlock full features.");
-    }
-    if (yearsInBusiness < 1) {
-      print("Action : Account will be reviewed again after 1 year in business.");
-    }
-  } else {
-    print("Status : ❌ REJECTED");
-    print("Reason : Does not meet the minimum approval criteria.");
-  }
-
-  print("=============================");
-} 
+void main() {
+  printSellerCard("TechZone Pvt Ltd", true, 85, 4.6, 4);
+  printSellerCard("QuickMart", true, 30, 3.7, 2);
+  printSellerCard("NewShop", true, 8, 3.1, 0);
+  printSellerCard("FakeStore", false, 50, 4.0, 5);
+  printSellerCard("TinyDeals", true, 3, 4.2, 1);
+}
